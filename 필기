@@ -1,0 +1,78 @@
+
+api 요청을 할때 마다 인증을 함
+
+https로 무조건 운영
+
+JWT , 세션인증 정도만 활용해라
+
+장고의 auth 앱 permission과 DRF permission은 다름
+
+is_active
+is_staff
+is_superuser
+
+dry-rest-permissions : 룰 기반 퍼미션도 지원 (써드파티 패키지)
+django-filter (DRF 와 통합 써드파티 패키지)
+
+Rate : 지정 기간 내에 허용할 최대 호출 횟수
+Scope : 각 Rate에 대한 별칭 (alias)
+Throttle : 특정 조건 하에 최대 호출 횟수를 결정하는 로직이 구현된 클래스
+
+cache_format
+
+cache 는 디폴트 캐시를 의미함
+caches
+
+database
+databases가 있음
+
+Rates 포맷
+포맷 : "숫자/간격"
+
+X-Forwarded-For (실제 클라이언트가 로드밴서로 넘겨주는 헤더)
+REMOTE_ADDR
+
+premium_scope 설정이 없으면
+self.scope = premium_scope
+> 뒤의 self.rate에서 참조
+
+light_scope 설정이 없으면
+self.scope = ligth_scope
+> 뒤의 self.rate에서 참조
+
+rest_framework.authentication.SessionAuthentication
+웹 프론트엔드와 장고가 같은 호스트를 쓴다면, 세션 인증을 사용할 수 있습니다. (nginx 등 활용)
+외부 서비스/앱에서 세션인증을 못씀
+
+django-rest-framework/rest_framework/authtoken/models.py
+
+SessionAuthentication ,BasicAuthentication 만 기본으로 되어 있음
+
+http GET http://localhost:8000/post/5/ "Authorization: Token $TOKEN"
+
+JWT
+로직만으로 인증이 가능
+실제 서버에서는 서명까지 같이 check
+
+# SSL 관련
+Let's Encrypt
+
+djangorestframework-jwt
+
+http POST http://localhost:8000/accounts/api-jwt-auth/ username=user2 password=1234
+
+{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNjMyMDUyMTcxLCJlbWFpbCI6IiJ9.4bMgc8quUlJviM4WXL86uzFVCBYl1tw4YHytCr6Mclc"
+}
+
+In [3]: from base64 import b64decode, b64encode
+
+In [4]: b64decode("eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6InVzZXIyIiwiZXhw
+   ...: IjoxNjMyMDUyNjQzLCJlbWFpbCI6IiJ9")
+Out[4]: b'{"user_id":3,"username":"user2","exp":1632052643,"email":""}' # 실제로 payload에 저장된 값 , expire : timestamp
+
+In [5]: b64encode(b'{"user_id":3,"username":"user2","exp":163205264
+   ...: 3,"email":""}')
+Out[5]: b'eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNjMyMDUyNjQzLCJlbWFpbCI6IiJ9'
+
+{'detail': 'Signature has expired.'} 
